@@ -47,7 +47,7 @@ jobs:
           STORE_PASSWORD: velune-pass
           KEY_ALIAS: velune
           KEY_PASSWORD: velune-pass
-        run: ./gradlew :app:assembleUniversalRelease --stacktrace
+        run: chmod +x gradlew && ./gradlew :app:assembleUniversalRelease --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
