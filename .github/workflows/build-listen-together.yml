@@ -24,12 +24,10 @@ jobs:
           cache: gradle
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install SDK packages
         run: |
-          yes | sdkmanager --licenses >/dev/null 2>&1 || true
-          sdkmanager \
+          test -d "$ANDROID_HOME/cmdline-tools/latest/bin" || exit 1
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null 2>&1 || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
             "platforms;android-36" \
             "build-tools;36.0.0" \
             "platform-tools" \
