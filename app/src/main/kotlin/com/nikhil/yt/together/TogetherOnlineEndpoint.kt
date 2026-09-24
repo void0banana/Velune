@@ -10,8 +10,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 
 object TogetherOnlineEndpoint {
-    // Your secure Render URL
-    private const val HTTP_URL = "https://velune-server.onrender.com"
+    // Velune Listen Together backend (Cloudflare Worker)
+    private const val HTTP_URL = "https://velune-together.velune-together.workers.dev"
 
     @Suppress("UNUSED_PARAMETER")
     fun baseUrlOrNull(
@@ -31,6 +31,6 @@ object TogetherOnlineEndpoint {
         }
 
         // Safety fallback just in case
-        return "wss://velune-server.onrender.com/v1/together/ws"
+        return "wss://velune-together.velune-together.workers.dev/v1/together/ws"
     }
 }
