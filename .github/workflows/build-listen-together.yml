@@ -1,0 +1,59 @@
+name: build-listen-together
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install SDK packages
+        run: |
+          yes | sdkmanager --licenses >/dev/null 2>&1 || true
+          sdkmanager \
+            "platforms;android-36" \
+            "build-tools;36.0.0" \
+            "platform-tools" \
+            "ndk;28.2.13676358"
+
+      - name: Create release keystore
+        run: |
+          mkdir -p app/keystore
+          keytool -genkeypair \
+            -v -keystore app/keystore/release.keystore \
+            -alias velune -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass velune-pass -keypass velune-pass \
+            -dname "CN=Velune LT, OU=LT, O=LT, L=LT, S=LT, C=IN"
+
+      - name: Build universal release APK
+        env:
+          STORE_PASSWORD: velune-pass
+          KEY_ALIAS: velune
+          KEY_PASSWORD: velune-pass
+        run: ./gradlew :app:assembleUniversalRelease --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: velune-listen-together-apk
+          path: app/build/outputs/apk/universal/release/*.apk
+          if-no-files-found: error
