@@ -129,10 +129,6 @@ android {
         checkDependencies = false
     }
 
-    androidResources {
-        generateLocaleConfig = true
-    }
-
     packaging {
         jniLibs {
             useLegacyPackaging = false
